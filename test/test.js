@@ -1,4 +1,4 @@
-var Sandbox = require('sandbox-javascript');
+var Sandbox = require('javascript-sandbox');
 var assert = chai.assert;
 
 describe("Sandbox", function() {

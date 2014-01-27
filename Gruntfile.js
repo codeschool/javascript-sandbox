@@ -14,7 +14,7 @@ module.exports = function(grunt) {
         src: ['lib/**/*.js'],
         dest: 'build/javascript-sandbox.js',
         options: {
-          alias: 'lib/index.js:sandbox-javascript'
+          alias: 'lib/index.js:javascript-sandbox'
         }
       }
     },
