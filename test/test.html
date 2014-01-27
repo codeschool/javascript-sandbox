@@ -1,0 +1,21 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Mocha Tests</title>
+  <link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
+  <script src="../build/javascript-sandbox.js"></script>
+  <script src="../node_modules/mocha/mocha.js"></script>
+  <script src="../node_modules/chai/chai.js"></script>
+  <script src="../node_modules/sinon/pkg/sinon.js"></script>
+  <script> mocha.setup('bdd');</script>
+  <script src="test.js"></script>
+  <script>
+    window.onload = function() {
+        mocha.run()
+    };
+  </script>
+ </head>
+<body>
+  <div id="mocha"></div>
+</body>
+</html>
