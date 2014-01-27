@@ -87,8 +87,8 @@ describe("Sandbox", function() {
 		})
 
 		it("called a function in the iframe", function() {
-			var iframeDocument = sandbox.exec(function() {
-				return this.document;
+			var iframeDocument = sandbox.exec(function(window) {
+				return window.document;
 			});
 
 			assert.equal(iframeDocument, sandbox.iframe.contentWindow.document, "Was not able to retrieve the iframe document.");
@@ -96,7 +96,7 @@ describe("Sandbox", function() {
 
 		it("called a function with args", function() {
 			var localArg1 = "my arg";
-			var iframeArg1 = sandbox.exec(function(arg1) {
+			var iframeArg1 = sandbox.exec(function(window, arg1) {
 				return arg1
 			}, localArg1);
 
@@ -106,7 +106,7 @@ describe("Sandbox", function() {
 		it("called a function with multiple args", function() {
 			var localArg1 = "my arg";
 			var localArg2 = "my additional arg";
-			var iframeArgs = sandbox.exec(function(arg1, arg2) {
+			var iframeArgs = sandbox.exec(function(window, arg1, arg2) {
 				return [arg1, arg2];
 			}, localArg1, localArg2);
 
