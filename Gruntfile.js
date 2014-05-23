@@ -4,7 +4,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks("grunt-contrib-clean");
   grunt.loadNpmTasks("grunt-contrib-watch");
   grunt.loadNpmTasks('grunt-karma');
-  grunt.loadNpmTasks('grunt-mocha');
 
   // Project configuration.
   grunt.initConfig({
@@ -22,6 +21,11 @@ module.exports = function(grunt) {
       unit: {
         configFile: 'karma.conf.js',
         background: true
+      },
+      continuous: {
+        configFile: 'karma.conf.js',
+        singleRun: true,
+        browsers: ['PhantomJS']
       }
     },
     watch: {
@@ -34,6 +38,6 @@ module.exports = function(grunt) {
   });
 
   // Default task(s).
-  grunt.registerTask('default', ['clean', 'browserify']);
+  grunt.registerTask('default', ['clean', 'browserify', 'karma:continuous']);
   grunt.registerTask('develop', ['karma:unit:start', 'watch']);
 };
