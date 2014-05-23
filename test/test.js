@@ -48,6 +48,14 @@ describe("Sandbox", function() {
       assert.equal(sandbox.get('console')['log'], logStub);
       sandbox.destroy();
     });
+
+    it("executes optional javascript", function() {
+      assert.throws(function() {
+        new Sandbox({
+          javascript: "throw {message: 'ha! ha!'}"
+        });
+      }, 'ha! ha!');
+    });
   })
 
   describe("#evaluate(code)", function() {
@@ -66,6 +74,12 @@ describe("Sandbox", function() {
       assert.ok(iframeBody, "iframe body was retrieved using user's code.");
       assert(iframeBody == sandbox.iframe.contentWindow.document.body, "user code returned the current window body, meaning the code was executed in the wrong context.");
     })
+
+    it ('throws uncaught exceptions', function() {
+      assert.throws(function() {
+        sandbox.evaluate("throw {message:'ha! ha!'};");
+      }, 'ha! ha!');
+    });
   });
 
   describe("#new(options={quiet:true})", function() {
@@ -126,6 +140,14 @@ describe("Sandbox", function() {
       assert.equal(localArg1, iframeArgs[0], "Argument 1 wasn't passed to the function.");
       assert.equal(localArg2, iframeArgs[1], "Argument 2 wasn't passed to the function.");
     })
+
+    it ('throws uncaught exceptions', function() {
+      assert.throws(function() {
+        sandbox.exec(function() {
+          throw {message: 'ha! ha!'};
+        });
+      }, 'ha! ha!');
+    });
   });
 
   describe("#get(propertyName)", function() {
