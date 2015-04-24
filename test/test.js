@@ -1,6 +1,35 @@
 var Sandbox = require('javascript-sandbox');
 var assert = chai.assert;
 
+// Needed to detect IE, since it reports line numbers & character positions differently.
+function detectBrowser() {
+  var ua = window.navigator.userAgent;
+
+  var msie = ua.indexOf('MSIE ');
+  if (msie > 0) {
+    // IE 10 or older => return version number
+    return "IE";
+  }
+
+  var trident = ua.indexOf('Trident/');
+  if (trident > 0) {
+    return "IE";
+  }
+
+  var edge = ua.indexOf('Edge/');
+  if (edge > 0) {
+    return "IE";
+  }
+
+  var phantomJS = ua.indexOf('PhantomJS/');
+  if (phantomJS > 0) {
+    return "PHANTOM";
+  }
+
+  // other browser
+  return false;
+}
+
 describe("Sandbox", function() {
   var sandbox;
 
@@ -67,7 +96,7 @@ describe("Sandbox", function() {
       sandbox.destroy();
     })
 
-    it ("executes user's code", function() {
+    it("executes user's code", function() {
       var code = "window.document.getElementsByTagName('body')";
       var iframeBody = sandbox.evaluate(code)[0];
 
@@ -75,10 +104,60 @@ describe("Sandbox", function() {
       assert(iframeBody == sandbox.iframe.contentWindow.document.body, "user code returned the current window body, meaning the code was executed in the wrong context.");
     })
 
-    it ('throws uncaught exceptions', function() {
+    it('throws uncaught exceptions', function() {
       assert.throws(function() {
         sandbox.evaluate("throw {message:'ha! ha!'};");
       }, 'ha! ha!');
+    });
+
+    it('throws uncaught exceptions with line numbers', function() {
+      var thrownError = null;
+
+      try {
+        sandbox.evaluate("throw new Error('ha! ha!');");
+      }
+      catch (error) {
+        thrownError = error;
+      }
+
+      assert(thrownError);
+      assert(thrownError.line);
+      assert(thrownError.line === 1);
+
+      var browser = detectBrowser();
+      switch (browser) {
+        case "IE":
+          assert(thrownError.character === 1);
+          break;
+        case "PHANTOM":
+          assert(!thrownError.character);
+          break;
+        default:
+          assert(thrownError.character);
+          assert(thrownError.character === 7);
+      }
+    });
+
+    it('throws non-error exceptions with no line numbers', function() {
+      var thrownError = null;
+
+      try {
+        sandbox.evaluate("throw {message:'ha! ha!'};");
+      }
+      catch (error) {
+        thrownError = error;
+      }
+
+      assert(thrownError);
+      var browser = detectBrowser();
+      switch (browser) {
+        case "PHANTOM":
+          assert(thrownError.line === 1);
+          break;
+        default:
+          assert(!thrownError.line);
+      }
+      assert(!thrownError.character);
     });
   });
 
@@ -141,7 +220,7 @@ describe("Sandbox", function() {
       assert.equal(localArg2, iframeArgs[1], "Argument 2 wasn't passed to the function.");
     })
 
-    it ('throws uncaught exceptions', function() {
+    it('throws uncaught exceptions', function() {
       assert.throws(function() {
         sandbox.exec(function() {
           throw {message: 'ha! ha!'};
