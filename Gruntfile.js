@@ -3,11 +3,19 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks("grunt-contrib-clean");
   grunt.loadNpmTasks("grunt-contrib-watch");
+  grunt.loadNpmTasks("grunt-contrib-connect");
   grunt.loadNpmTasks('grunt-karma');
 
   // Project configuration.
   grunt.initConfig({
     clean: ["build/javascript-sandbox.js"],
+    connect: {
+      server: {
+        options: {
+          port: 4000
+        }
+      }
+    },
     browserify: {
       common: {
         src: ['lib/**/*.js'],

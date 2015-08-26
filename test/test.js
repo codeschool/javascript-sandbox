@@ -81,7 +81,7 @@ describe("Sandbox", function() {
     it("executes optional javascript", function() {
       assert.throws(function() {
         new Sandbox({
-          javascript: "throw {message: 'ha! ha!'}"
+          javascript: "throw {message: 'ha! ha!', toString:function() {return this.message}}"
         });
       }, 'ha! ha!');
     });
@@ -106,7 +106,7 @@ describe("Sandbox", function() {
 
     it('throws uncaught exceptions', function() {
       assert.throws(function() {
-        sandbox.evaluate("throw {message:'ha! ha!'};");
+        sandbox.evaluate("throw {message:'ha! ha!', toString:function() {return this.message}};");
       }, 'ha! ha!');
     });
 
@@ -223,7 +223,7 @@ describe("Sandbox", function() {
     it('throws uncaught exceptions', function() {
       assert.throws(function() {
         sandbox.exec(function() {
-          throw {message: 'ha! ha!'};
+          throw {message: 'ha! ha!', toString:function() {return this.message}};
         });
       }, 'ha! ha!');
     });
@@ -262,6 +262,28 @@ describe("Sandbox", function() {
       
       var iframeMyVar = sandbox.iframe.contentWindow.myVar;
       assert.equal(myVar, iframeMyVar, "The variable was not set in the sandbox.");
+    })
+  })
+
+  describe("polyfills", function() {
+    beforeEach(function() {
+      sandbox = new Sandbox();
+    })
+
+    afterEach(function() {
+      sandbox.destroy();
+    })
+
+    it("has polyfilled methods", function() {
+      var console = sandbox.get('console');
+      assert(console.time);
+      assert(console.timeEnd);
+      assert(console.debug);
+      assert(console.warn);
+      assert(console.info);
+      assert(console.group);
+      assert(console.groupEnd);
+      assert(console.count);
     })
   })
 });
