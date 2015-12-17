@@ -47,5 +47,5 @@ module.exports = function(grunt) {
 
   // Default task(s).
   grunt.registerTask('default', ['clean', 'browserify', 'karma:continuous']);
-  grunt.registerTask('develop', ['karma:unit:start', 'watch']);
+  grunt.registerTask('develop', ['clean', 'browserify', 'karma:unit:start', 'watch']);
 };
